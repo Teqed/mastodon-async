@@ -10,7 +10,7 @@ pub mod account;
 pub mod attachment;
 /// Data structures for ser/de of card-related resources
 pub mod card;
-/// Data structures for ser/de of contetx-related resources
+/// Data structures for ser/de of context-related resources
 pub mod context;
 /// Data structures for ser/de of streaming events
 pub mod event;
@@ -40,6 +40,9 @@ pub mod status;
 /// Data structure for ser/de visibility
 pub mod visibility;
 
+/// Admin API data structures, some of which have the same names as non-admin data structures
+pub mod admin;
+
 /// An empty JSON object.
 #[derive(Deserialize, Serialize, Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Empty {}
@@ -50,6 +53,7 @@ pub struct Empty {}
 pub mod prelude {
     pub use super::{
         account::{Account, Source},
+        admin::{Ip, IpBlock, IpBlockSeverity},
         attachment::{Attachment, MediaType},
         card::Card,
         context::Context,

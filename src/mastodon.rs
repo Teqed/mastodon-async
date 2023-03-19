@@ -17,6 +17,7 @@ use crate::{
 };
 use futures::TryStream;
 use log::{as_debug, as_serde, debug, error, trace};
+use mastodon_async_entities::admin::IpBlockId;
 use mastodon_async_entities::attachment::ProcessedAttachment;
 use reqwest::{multipart::Part, Client, RequestBuilder};
 use url::Url;
@@ -52,7 +53,12 @@ impl From<Data> for Mastodon {
     }
 }
 impl Mastodon {
-    methods![get and get_with_call_id, post and post_with_call_id, delete and delete_with_call_id,];
+    methods![
+        get and get_with_call_id,
+        post and post_with_call_id,
+        delete and delete_with_call_id,
+        put and put_with_call_id,
+    ];
 
     paged_routes! {
         (get) favourites: "favourites" => Status,
@@ -66,6 +72,7 @@ impl Mastodon {
         (get) reports: "reports" => Report,
         (get (q: &'a str, #[serde(skip_serializing_if = "Option::is_none")] limit: Option<u64>, following: bool,)) search_accounts: "accounts/search" => Account,
         (get) get_endorsements: "endorsements" => Account,
+        (get) get_admin_ip_blocks: "admin/ip_blocks" => IpBlock,
     }
 
     paged_routes_with_id! {
@@ -91,6 +98,7 @@ impl Mastodon {
         (delete) delete_push_subscription: "push/subscription" => Empty,
         (get) get_filters: "filters" => Vec<Filter>,
         (get) get_follow_suggestions: "suggestions" => Vec<Account>,
+        (post) create_admin_ip_block: "admin/ip_blocks" => IpBlock,
     }
 
     route_v2! {
@@ -122,6 +130,8 @@ impl Mastodon {
         (post) endorse_user[AccountId]: "accounts/{}/pin" => Relationship,
         (post) unendorse_user[AccountId]: "accounts/{}/unpin" => Relationship,
         (get) attachment[AttachmentId]: "media/{}" => Attachment,
+        (get) get_admin_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
+        (delete) delete_admin_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
     }
 
     streaming! {

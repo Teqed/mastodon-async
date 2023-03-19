@@ -1,4 +1,4 @@
-//! Module containing everything related to media attachements.
+//! Module containing everything related to media attachments.
 
 use crate::AttachmentId;
 use derive_is_enum_variant::is_enum_variant;

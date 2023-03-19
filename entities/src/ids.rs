@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
+#[macro_export]
 macro_rules! define_ids {
     ($name:ident, $($rest:ident,)+) => {
         define_ids!($name,);
@@ -10,7 +11,7 @@ macro_rules! define_ids {
         define_ids!($($rest,)+);
     };
     ($name:ident,) => {
-        /// Wrapper type for a account ID string
+        /// Wrapper type for an ID string
         #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
         #[serde(transparent)]
         pub struct $name(String);
