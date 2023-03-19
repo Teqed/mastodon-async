@@ -1,11 +1,12 @@
-//! Module representing an IP block.
+//! Module representing an IP range block.
 
 use super::ids::IpBlockId;
 use ipnet::IpNet;
+use is_variant::IsVariant;
 use serde::{Deserialize, Serialize};
 use time::{serde::iso8601, OffsetDateTime};
 
-/// An IP block.
+/// An IP range block.
 ///
 /// https://docs.joinmastodon.org/entities/Admin_IpBlock/
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -22,4 +23,10 @@ pub struct IpBlock {
     pub expires_at: Option<OffsetDateTime>,
 }
 
-pub enum Severity {}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, IsVariant)]
+#[serde(rename_all = "snake_case")]
+pub enum Severity {
+    SignUpRequiresApproval,
+    SignUpBlock,
+    NoAccess,
+}

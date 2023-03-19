@@ -11,3 +11,8 @@ mod filter;
 mod push;
 mod statuses;
 mod update_credentials;
+
+/// Data structures for the MastodonClient::admin_add_ip_block and ::admin_update_ip_block methods
+pub use self::admin::ip_block::{AddIpBlockRequest, UpdateIpBlockRequest};
+
+mod admin;

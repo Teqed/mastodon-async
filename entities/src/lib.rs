@@ -53,7 +53,7 @@ pub struct Empty {}
 pub mod prelude {
     pub use super::{
         account::{Account, Source},
-        admin::{Ip, IpBlock, IpBlockSeverity},
+        admin::{Ip, IpBlock, IpBlockId, IpBlockSeverity},
         attachment::{Attachment, MediaType},
         card::Card,
         context::Context,

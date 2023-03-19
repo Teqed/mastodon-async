@@ -12,12 +12,11 @@ use crate::{
     helpers::read_response::read_response,
     log_serde,
     polling_time::PollingTime,
-    AddFilterRequest, AddPushRequest, Data, NewStatus, Page, StatusesRequest, UpdateCredsRequest,
-    UpdatePushRequest,
+    AddFilterRequest, AddIpBlockRequest, AddPushRequest, Data, NewStatus, Page, StatusesRequest,
+    UpdateCredsRequest, UpdateIpBlockRequest, UpdatePushRequest,
 };
 use futures::TryStream;
 use log::{as_debug, as_serde, debug, error, trace};
-use mastodon_async_entities::admin::IpBlockId;
 use mastodon_async_entities::attachment::ProcessedAttachment;
 use reqwest::{multipart::Part, Client, RequestBuilder};
 use url::Url;
@@ -72,7 +71,7 @@ impl Mastodon {
         (get) reports: "reports" => Report,
         (get (q: &'a str, #[serde(skip_serializing_if = "Option::is_none")] limit: Option<u64>, following: bool,)) search_accounts: "accounts/search" => Account,
         (get) get_endorsements: "endorsements" => Account,
-        (get) get_admin_ip_blocks: "admin/ip_blocks" => IpBlock,
+        (get) admin_get_ip_blocks: "admin/ip_blocks" => IpBlock,
     }
 
     paged_routes_with_id! {
@@ -98,7 +97,6 @@ impl Mastodon {
         (delete) delete_push_subscription: "push/subscription" => Empty,
         (get) get_filters: "filters" => Vec<Filter>,
         (get) get_follow_suggestions: "suggestions" => Vec<Account>,
-        (post) create_admin_ip_block: "admin/ip_blocks" => IpBlock,
     }
 
     route_v2! {
@@ -130,8 +128,8 @@ impl Mastodon {
         (post) endorse_user[AccountId]: "accounts/{}/pin" => Relationship,
         (post) unendorse_user[AccountId]: "accounts/{}/unpin" => Relationship,
         (get) attachment[AttachmentId]: "media/{}" => Attachment,
-        (get) get_admin_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
-        (delete) delete_admin_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
+        (get) admin_get_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
+        (delete) admin_delete_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
     }
 
     streaming! {
@@ -333,6 +331,32 @@ impl Mastodon {
     pub async fn followed_by_me(&self) -> Result<Page<Account>> {
         let me = self.verify_credentials().await?;
         self.following(&me.id).await
+    }
+
+    /// POST /api/v1/admin/ip_blocks
+    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#create
+    pub async fn admin_add_ip_block(&self, request: &mut AddIpBlockRequest) -> Result<IpBlock> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/ip_blocks"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// PUT /api/v1/admin/ip_blocks/:id
+    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#update
+    pub async fn admin_update_ip_block(
+        &self,
+        id: &IpBlockId,
+        request: &mut UpdateIpBlockRequest,
+    ) -> Result<IpBlock> {
+        let url = self.route(format!("/api/v1/admin/ip_blocks/{}", id));
+        let response = self.client.put(&url).json(&request).send().await?;
+
+        read_response(response).await
     }
 
     /// Wait for the media to be done processing and return it with the URL.
