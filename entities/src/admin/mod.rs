@@ -1,9 +1,10 @@
 pub mod ids;
 pub use ids::*;
 
+pub mod account;
 pub mod ip;
-pub use ip::Ip;
-
 pub mod ip_block;
-pub use ip_block::IpBlock;
-pub use ip_block::Severity as IpBlockSeverity;
+
+pub use account::Account;
+pub use ip::Ip;
+pub use ip_block::{IpBlock, Severity as IpBlockSeverity};

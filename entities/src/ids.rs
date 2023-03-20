@@ -39,6 +39,7 @@ macro_rules! define_ids {
 
 define_ids!(
     AccountId,
+    ApplicationId,
     AttachmentId,
     FilterId,
     ListId,
