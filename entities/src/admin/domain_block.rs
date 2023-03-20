@@ -1,7 +1,7 @@
 //! Module representing a domain block.
 
 use crate::prelude::DomainBlockId;
-use is_variant::IsVariant;
+use derive_is_enum_variant::is_enum_variant;
 use serde::{Deserialize, Serialize};
 use time::{serde::iso8601, OffsetDateTime};
 
@@ -32,7 +32,7 @@ pub struct DomainBlock {
 
 /// Level of restriction of the domain.
 /// https://docs.joinmastodon.org/entities/Admin_DomainBlock/#severity
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, IsVariant)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, is_enum_variant)]
 #[serde(rename_all = "snake_case")]
 pub enum Severity {
     /// Do nothing. Allows for rejecting media or reports.

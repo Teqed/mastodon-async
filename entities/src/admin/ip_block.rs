@@ -1,8 +1,8 @@
 //! Module representing an IP range block.
 
 use crate::prelude::IpBlockId;
+use derive_is_enum_variant::is_enum_variant;
 use ipnet::IpNet;
-use is_variant::IsVariant;
 use serde::{Deserialize, Serialize};
 use time::{serde::iso8601, OffsetDateTime};
 
@@ -28,7 +28,7 @@ pub struct IpBlock {
 
 /// Level of restriction of the IP range.
 /// https://docs.joinmastodon.org/entities/Admin_IpBlock/#severity
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, IsVariant)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, is_enum_variant)]
 #[serde(rename_all = "snake_case")]
 pub enum Severity {
     /// Any signup from this IP range will create a pending account.

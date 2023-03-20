@@ -650,7 +650,7 @@ impl fmt::Display for Write {
 }
 
 /// Represents the granular "admin:read:___" oauth scopes
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, IsVariant)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, is_enum_variant)]
 pub enum AdminRead {
     /// Accounts
     #[serde(rename = "accounts")]
@@ -725,7 +725,7 @@ impl fmt::Display for AdminRead {
 }
 
 /// Represents the granular "admin:write:___" oauth scopes
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, IsVariant)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, is_enum_variant)]
 pub enum AdminWrite {
     /// Accounts
     #[serde(rename = "accounts")]
