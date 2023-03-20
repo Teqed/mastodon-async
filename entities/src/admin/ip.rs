@@ -5,7 +5,6 @@ use std::net::IpAddr;
 use time::{serde::iso8601, OffsetDateTime};
 
 /// An IP address with metadata related to the history of a given account.
-///
 /// https://docs.joinmastodon.org/entities/Admin_Ip/
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Ip {

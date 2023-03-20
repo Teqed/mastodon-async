@@ -95,8 +95,10 @@ pub use mastodon::{Mastodon, MastodonUnauthenticated};
 pub use mastodon_async_entities::visibility::Visibility;
 pub use registration::Registration;
 pub use requests::{
-    AddFilterRequest, AddIpBlockRequest, AddPushRequest, StatusesRequest, UpdateCredsRequest,
-    UpdateIpBlockRequest, UpdatePushRequest,
+    AddAdminDomainBlockRequest, AddCanonicalEmailBlockRequest, AddDomainAllowRequest,
+    AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest,
+    StatusesRequest, TestCanonicalEmailBlocksRequest, UpdateCredsRequest, UpdateIpBlockRequest,
+    UpdatePushRequest,
 };
 pub use status_builder::{NewStatus, StatusBuilder};
 

@@ -6,4 +6,10 @@ use serde::{
 };
 use std::fmt::{Display, Formatter};
 
-define_ids!(IpBlockId,);
+define_ids!(
+    CanonicalEmailBlockId,
+    DomainAllowId,
+    DomainBlockId,
+    EmailDomainBlockId,
+    IpBlockId,
+);

@@ -12,7 +12,18 @@ mod push;
 mod statuses;
 mod update_credentials;
 
+/// Data structures for the MastodonClient::admin_add_canonical_email_block and ::admin_test_canonical_email_blocks methods
+pub use self::admin::canonical_email_block::{
+    AddCanonicalEmailBlockRequest, TestCanonicalEmailBlocksRequest,
+};
+/// Data structure for the MastodonClient::admin_add_domain_allow method
+pub use self::admin::domain_allow::AddDomainAllowRequest;
+/// Data structure for the MastodonClient::admin_add_domain_block and ::admin_update_domain_block methods
+pub use self::admin::domain_block::AddDomainBlockRequest as AddAdminDomainBlockRequest;
+/// Data structure for the MastodonClient::admin_add_email_domain_block method
+pub use self::admin::email_domain_block::AddEmailDomainBlockRequest;
 /// Data structures for the MastodonClient::admin_add_ip_block and ::admin_update_ip_block methods
 pub use self::admin::ip_block::{AddIpBlockRequest, UpdateIpBlockRequest};
 
-mod admin;
+/// Unprefixed admin request data structures.
+pub mod admin;

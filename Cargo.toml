@@ -82,6 +82,10 @@ features = ["multipart", "json", "stream"]
 version = "1"
 features = ["derive"]
 
+[dependencies.serde_with]
+version = "2"
+features = ["hex"]
+
 [dependencies.toml]
 version = "0.7"
 optional = true

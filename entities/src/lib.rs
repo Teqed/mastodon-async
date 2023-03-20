@@ -55,7 +55,12 @@ pub struct Empty {}
 pub mod prelude {
     pub use super::{
         account::{Account, Source},
-        admin::{Account as AdminAccount, Ip, IpBlock, IpBlockId, IpBlockSeverity},
+        admin::{
+            ids::DomainBlockId as AdminDomainBlockId, ids::*, Account as AdminAccount,
+            CanonicalEmailBlock, DomainAllow, DomainBlock as AdminDomainBlock,
+            DomainBlockSeverity as AdminDomainBlockSeverity, EmailDomainBlock,
+            EmailDomainBlockHistoryDay, Ip, IpBlock, IpBlockId, IpBlockSeverity,
+        },
         attachment::{Attachment, MediaType},
         card::Card,
         context::Context,

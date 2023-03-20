@@ -12,8 +12,10 @@ use crate::{
     helpers::read_response::read_response,
     log_serde,
     polling_time::PollingTime,
-    AddFilterRequest, AddIpBlockRequest, AddPushRequest, Data, NewStatus, Page, StatusesRequest,
-    UpdateCredsRequest, UpdateIpBlockRequest, UpdatePushRequest,
+    AddAdminDomainBlockRequest, AddCanonicalEmailBlockRequest, AddDomainAllowRequest,
+    AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest, Data,
+    NewStatus, Page, StatusesRequest, TestCanonicalEmailBlocksRequest, UpdateCredsRequest,
+    UpdateIpBlockRequest, UpdatePushRequest,
 };
 use futures::TryStream;
 use log::{as_debug, as_serde, debug, error, trace};
@@ -71,6 +73,10 @@ impl Mastodon {
         (get) reports: "reports" => Report,
         (get (q: &'a str, #[serde(skip_serializing_if = "Option::is_none")] limit: Option<u64>, following: bool,)) search_accounts: "accounts/search" => Account,
         (get) get_endorsements: "endorsements" => Account,
+        (get) admin_get_canonical_email_blocks: "admin/canonical_email_blocks" => CanonicalEmailBlock,
+        (get) admin_get_domain_allows: "admin/domain_allows" => DomainAllow,
+        (get) admin_get_domain_blocks: "admin/domain_blocks" => AdminDomainBlock,
+        (get) admin_get_email_domain_blocks: "admin/email_domain_blocks" => EmailDomainBlock,
         (get) admin_get_ip_blocks: "admin/ip_blocks" => IpBlock,
     }
 
@@ -128,6 +134,14 @@ impl Mastodon {
         (post) endorse_user[AccountId]: "accounts/{}/pin" => Relationship,
         (post) unendorse_user[AccountId]: "accounts/{}/unpin" => Relationship,
         (get) attachment[AttachmentId]: "media/{}" => Attachment,
+        (get) admin_get_canonical_email_block[CanonicalEmailBlockId]: "admin/canonical_email_blocks/{}" => CanonicalEmailBlock,
+        (delete) admin_delete_canonical_email_block[CanonicalEmailBlockId]: "admin/canonical_email_blocks/{}" => CanonicalEmailBlock,
+        (get) admin_get_domain_allow[DomainAllowId]: "admin/domain_allows/{}" => DomainAllow,
+        (delete) admin_delete_domain_allow[DomainAllowId]: "admin/domain_allows/{}" => DomainAllow,
+        (get) admin_get_domain_block[AdminDomainBlockId]: "admin/domain_blocks/{}" => AdminDomainBlock,
+        (delete) admin_delete_domain_block[AdminDomainBlockId]: "admin/domain_blocks/{}" => AdminDomainBlock,
+        (get) admin_get_email_domain_block[EmailDomainBlockId]: "admin/email_domain_blocks/{}" => EmailDomainBlock,
+        (delete) admin_delete_email_domain_block[EmailDomainBlockId]: "admin/email_domain_blocks/{}" => EmailDomainBlock,
         (get) admin_get_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
         (delete) admin_delete_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
         (get) admin_get_account[AccountId]: "admin/accounts/{}" => AdminAccount,
@@ -332,6 +346,101 @@ impl Mastodon {
     pub async fn followed_by_me(&self) -> Result<Page<Account>> {
         let me = self.verify_credentials().await?;
         self.following(&me.id).await
+    }
+
+    // TODO: macro the add/update methods for at least admin objects
+
+    /// POST /api/v1/admin/canonical_email_blocks
+    /// https://docs.joinmastodon.org/methods/admin/canonical_email_blocks/#create
+    pub async fn admin_add_canonical_email_block(
+        &self,
+        request: &mut AddCanonicalEmailBlockRequest,
+    ) -> Result<CanonicalEmailBlock> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/canonical_email_blocks"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// POST /api/v1/admin/ip_blocks
+    /// https://docs.joinmastodon.org/methods/admin/canonical_email_blocks/#test
+    pub async fn admin_test_canonical_email_blocks(
+        &self,
+        request: &mut TestCanonicalEmailBlocksRequest,
+    ) -> Result<Vec<CanonicalEmailBlock>> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/canonical_email_blocks/test"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// POST /api/v1/admin/domain_allows
+    /// https://docs.joinmastodon.org/methods/admin/domain_allows/#create
+    pub async fn admin_add_domain_allow(
+        &self,
+        request: &mut AddDomainAllowRequest,
+    ) -> Result<DomainAllow> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/domain_allows"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// POST /api/v1/admin/ip_blocks
+    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#create
+    pub async fn admin_add_domain_block(
+        &self,
+        request: &mut AddAdminDomainBlockRequest,
+    ) -> Result<AdminDomainBlock> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/domain_blocks"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// PUT /api/v1/admin/ip_blocks/:id
+    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#update
+    pub async fn admin_update_domain_block(
+        &self,
+        id: &AdminDomainBlockId,
+        request: &mut AddAdminDomainBlockRequest,
+    ) -> Result<AdminDomainBlock> {
+        let url = self.route(format!("/api/v1/admin/domain_blocks/{}", id));
+        let response = self.client.put(&url).json(&request).send().await?;
+
+        read_response(response).await
+    }
+
+    /// POST /api/v1/admin/email_domain_blocks
+    /// https://docs.joinmastodon.org/methods/admin/email_domain_blocks/#create
+    pub async fn admin_add_email_domain_block(
+        &self,
+        request: &mut AddEmailDomainBlockRequest,
+    ) -> Result<EmailDomainBlock> {
+        let response = self
+            .client
+            .post(self.route("/api/v1/admin/email_domain_blocks"))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
     }
 
     /// POST /api/v1/admin/ip_blocks

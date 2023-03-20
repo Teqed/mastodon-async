@@ -1,22 +1,22 @@
 use ipnet::IpNet;
-use mastodon_async_entities::admin::IpBlockSeverity;
+use mastodon_async_entities::admin::ip_block::Severity;
+use serde_with::skip_serializing_none;
 use time::{serde::rfc3339, OffsetDateTime};
 
 /// Create a new IP range block.
+#[skip_serializing_none]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AddIpBlockRequest {
-    #[serde(skip_serializing_if = "Option::is_none")]
     ip: Option<IpNet>,
-    severity: IpBlockSeverity,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    severity: Severity,
     comment: Option<String>,
     #[serde(serialize_with = "rfc3339::option::serialize")]
     expires_at: Option<OffsetDateTime>,
 }
 
 impl AddIpBlockRequest {
-    pub fn new(severity: IpBlockSeverity) -> Self {
-        AddIpBlockRequest {
+    pub fn new(severity: Severity) -> Self {
+        Self {
             ip: None,
             severity,
             comment: None,
@@ -29,8 +29,11 @@ impl AddIpBlockRequest {
         self
     }
 
-    pub fn comment(&mut self, comment: String) -> &mut Self {
-        self.comment = Some(comment);
+    pub fn comment<T>(&mut self, comment: T) -> &mut Self
+    where
+        T: Into<String>,
+    {
+        self.comment = Some(comment.into());
         self
     }
 
@@ -42,22 +45,19 @@ impl AddIpBlockRequest {
 
 /// Update an existing IP range block.
 /// Differs from [`AddIpBlockRequest`] only in that all parameters are optional.
+#[skip_serializing_none]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct UpdateIpBlockRequest {
-    #[serde(skip_serializing_if = "Option::is_none")]
     ip: Option<IpNet>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    severity: Option<IpBlockSeverity>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    severity: Option<Severity>,
     comment: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[serde(serialize_with = "rfc3339::option::serialize")]
     expires_at: Option<OffsetDateTime>,
 }
 
 impl UpdateIpBlockRequest {
     pub fn new() -> Self {
-        UpdateIpBlockRequest {
+        Self {
             ip: None,
             severity: None,
             comment: None,
@@ -70,13 +70,16 @@ impl UpdateIpBlockRequest {
         self
     }
 
-    pub fn severity(&mut self, severity: IpBlockSeverity) -> &mut Self {
+    pub fn severity(&mut self, severity: Severity) -> &mut Self {
         self.severity = Some(severity);
         self
     }
 
-    pub fn comment(&mut self, comment: String) -> &mut Self {
-        self.comment = Some(comment);
+    pub fn comment<T>(&mut self, comment: T) -> &mut Self
+    where
+        T: Into<String>,
+    {
+        self.comment = Some(comment.into());
         self
     }
 
@@ -96,22 +99,22 @@ mod tests {
 
     #[test]
     fn test_serialize_add_request() {
-        let mut request = AddIpBlockRequest::new(IpBlockSeverity::SignUpRequiresApproval);
+        let mut request = AddIpBlockRequest::new(Severity::SignUpRequiresApproval);
         request.ip(IpNet::from_str("192.168.0.0/16").unwrap());
-        request.comment("test comment".to_string());
+        request.comment("test comment");
         request.expires_at(OffsetDateTime::from_unix_timestamp(1679261134).unwrap());
         let ser = serde_json::to_string(&request).expect("Couldn't serialize");
         assert_eq!(
             ser,
             r#"{"ip":"192.168.0.0/16","severity":"sign_up_requires_approval","comment":"test comment","expires_at":"2023-03-19T21:25:34Z"}"#
-        )
+        );
     }
 
     #[test]
     fn test_serialize_update_request() {
         let mut request = UpdateIpBlockRequest::new();
-        request.severity(IpBlockSeverity::NoAccess);
+        request.severity(Severity::NoAccess);
         let ser = serde_json::to_string(&request).expect("Couldn't serialize");
-        assert_eq!(ser, r#"{"severity":"no_access"}"#)
+        assert_eq!(ser, r#"{"severity":"no_access"}"#);
     }
 }
