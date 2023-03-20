@@ -1,6 +1,6 @@
 //! Module representing an IP range block.
 
-use super::ids::IpBlockId;
+use crate::prelude::IpBlockId;
 use ipnet::IpNet;
 use is_variant::IsVariant;
 use serde::{Deserialize, Serialize};

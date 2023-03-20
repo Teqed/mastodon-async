@@ -130,6 +130,7 @@ impl Mastodon {
         (get) attachment[AttachmentId]: "media/{}" => Attachment,
         (get) admin_get_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
         (delete) admin_delete_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
+        (get) admin_get_account[AccountId]: "admin/accounts/{}" => AdminAccount,
     }
 
     streaming! {
