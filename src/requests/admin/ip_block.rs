@@ -1,14 +1,16 @@
 use ipnet::IpNet;
 use mastodon_async_entities::admin::IpBlockSeverity;
-use time::{serde::iso8601, OffsetDateTime};
+use time::{serde::rfc3339, OffsetDateTime};
 
 /// Create a new IP range block.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct AddIpBlockRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
     ip: Option<IpNet>,
     severity: IpBlockSeverity,
+    #[serde(skip_serializing_if = "Option::is_none")]
     comment: Option<String>,
-    #[serde(serialize_with = "iso8601::option::serialize")]
+    #[serde(serialize_with = "rfc3339::option::serialize")]
     expires_at: Option<OffsetDateTime>,
 }
 
@@ -42,10 +44,14 @@ impl AddIpBlockRequest {
 /// Differs from [`AddIpBlockRequest`] only in that all parameters are optional.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct UpdateIpBlockRequest {
+    #[serde(skip_serializing_if = "Option::is_none")]
     ip: Option<IpNet>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     severity: Option<IpBlockSeverity>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     comment: Option<String>,
-    #[serde(serialize_with = "iso8601::option::serialize")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(serialize_with = "rfc3339::option::serialize")]
     expires_at: Option<OffsetDateTime>,
 }
 
@@ -97,7 +103,7 @@ mod tests {
         let ser = serde_json::to_string(&request).expect("Couldn't serialize");
         assert_eq!(
             ser,
-            r#"{"ip":"192.168.0.0/16","severity":"sign_up_requires_approval","comment":"test comment","expires_at":"+002023-03-19T21:25:34.000000000Z"}"#
+            r#"{"ip":"192.168.0.0/16","severity":"sign_up_requires_approval","comment":"test comment","expires_at":"2023-03-19T21:25:34Z"}"#
         )
     }
 
@@ -106,9 +112,6 @@ mod tests {
         let mut request = UpdateIpBlockRequest::new();
         request.severity(IpBlockSeverity::NoAccess);
         let ser = serde_json::to_string(&request).expect("Couldn't serialize");
-        assert_eq!(
-            ser,
-            r#"{"ip":null,"severity":"no_access","comment":null,"expires_at":null}"#
-        )
+        assert_eq!(ser, r#"{"severity":"no_access"}"#)
     }
 }
