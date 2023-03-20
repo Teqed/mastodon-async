@@ -33,6 +33,8 @@ pub mod push;
 pub mod relationship;
 /// Data structures for ser/de of report-related resources
 pub mod report;
+/// Data structures for ser/de of role-related resources
+pub mod role;
 /// Data structures for ser/de of search-related resources
 pub mod search_result;
 /// Data structures for ser/de of status-related resources
@@ -67,6 +69,7 @@ pub mod prelude {
         push::Subscription,
         relationship::Relationship,
         report::Report,
+        role::{Permissions as RolePermissions, Role},
         search_result::SearchResult,
         status::{Application, Emoji, Status},
         visibility::Visibility,

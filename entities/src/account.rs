@@ -1,13 +1,12 @@
 //! A module containing everything relating to a account returned from the api.
 
+use super::prelude::*;
 use serde::{
     de::{self, Deserializer, Unexpected},
     Deserialize, Serialize,
 };
 use std::path::PathBuf;
 use time::{serde::iso8601, OffsetDateTime};
-
-use crate::AccountId;
 
 /// A struct representing an Account.
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
@@ -54,6 +53,9 @@ pub struct Account {
     pub fields: Option<Vec<MetadataField>>,
     /// Boolean indicating whether this account is a bot or not
     pub bot: Option<bool>,
+    /// Role assigned to the user.
+    /// Added in Mastodon 4.0, not present before that.
+    pub role: Option<Role>,
 }
 
 /// A single name: value pair from a user's profile
@@ -77,14 +79,14 @@ impl MetadataField {
 /// An extra object given from `verify_credentials` giving defaults about a user
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Source {
-    privacy: Option<crate::visibility::Visibility>,
+    privacy: Option<Visibility>,
     #[serde(deserialize_with = "string_or_bool")]
     sensitive: bool,
     note: Option<String>,
     fields: Option<Vec<MetadataField>>,
 }
 
-fn string_or_bool<'de, D: Deserializer<'de>>(val: D) -> ::std::result::Result<bool, D::Error> {
+fn string_or_bool<'de, D: Deserializer<'de>>(val: D) -> Result<bool, D::Error> {
     #[derive(Clone, Debug, Deserialize, PartialEq, Eq)]
     #[serde(untagged)]
     pub enum BoolOrString {
@@ -112,7 +114,7 @@ fn string_or_bool<'de, D: Deserializer<'de>>(val: D) -> ::std::result::Result<bo
 #[derive(Debug, Default, Clone, Serialize, PartialEq, Eq)]
 pub struct UpdateSource {
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub privacy: Option<crate::visibility::Visibility>,
+    pub privacy: Option<Visibility>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sensitive: Option<bool>,
 }

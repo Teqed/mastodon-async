@@ -47,5 +47,6 @@ define_ids!(
     SubscriptionId,
     RelationshipId,
     ReportId,
+    RoleId,
     StatusId,
 );
