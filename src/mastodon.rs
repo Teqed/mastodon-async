@@ -357,8 +357,10 @@ impl Mastodon {
         request: &mut AddCanonicalEmailBlockRequest,
     ) -> Result<CanonicalEmailBlock> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/canonical_email_blocks"))
+            .authenticated(
+                self.client
+                    .post(self.route("/api/v1/admin/canonical_email_blocks")),
+            )
             .json(&request)
             .send()
             .await?;
@@ -373,8 +375,10 @@ impl Mastodon {
         request: &mut TestCanonicalEmailBlocksRequest,
     ) -> Result<Vec<CanonicalEmailBlock>> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/canonical_email_blocks/test"))
+            .authenticated(
+                self.client
+                    .post(self.route("/api/v1/admin/canonical_email_blocks/test")),
+            )
             .json(&request)
             .send()
             .await?;
@@ -389,8 +393,7 @@ impl Mastodon {
         request: &mut AddDomainAllowRequest,
     ) -> Result<DomainAllow> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/domain_allows"))
+            .authenticated(self.client.post(self.route("/api/v1/admin/domain_allows")))
             .json(&request)
             .send()
             .await?;
@@ -405,8 +408,7 @@ impl Mastodon {
         request: &mut AddAdminDomainBlockRequest,
     ) -> Result<AdminDomainBlock> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/domain_blocks"))
+            .authenticated(self.client.post(self.route("/api/v1/admin/domain_blocks")))
             .json(&request)
             .send()
             .await?;
@@ -422,7 +424,11 @@ impl Mastodon {
         request: &mut AddAdminDomainBlockRequest,
     ) -> Result<AdminDomainBlock> {
         let url = self.route(format!("/api/v1/admin/domain_blocks/{}", id));
-        let response = self.client.put(&url).json(&request).send().await?;
+        let response = self
+            .authenticated(self.client.put(&url))
+            .json(&request)
+            .send()
+            .await?;
 
         read_response(response).await
     }
@@ -434,8 +440,10 @@ impl Mastodon {
         request: &mut AddEmailDomainBlockRequest,
     ) -> Result<EmailDomainBlock> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/email_domain_blocks"))
+            .authenticated(
+                self.client
+                    .post(self.route("/api/v1/admin/email_domain_blocks")),
+            )
             .json(&request)
             .send()
             .await?;
@@ -447,8 +455,7 @@ impl Mastodon {
     /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#create
     pub async fn admin_add_ip_block(&self, request: &mut AddIpBlockRequest) -> Result<IpBlock> {
         let response = self
-            .client
-            .post(self.route("/api/v1/admin/ip_blocks"))
+            .authenticated(self.client.post(self.route("/api/v1/admin/ip_blocks")))
             .json(&request)
             .send()
             .await?;
@@ -464,7 +471,11 @@ impl Mastodon {
         request: &mut UpdateIpBlockRequest,
     ) -> Result<IpBlock> {
         let url = self.route(format!("/api/v1/admin/ip_blocks/{}", id));
-        let response = self.client.put(&url).json(&request).send().await?;
+        let response = self
+            .authenticated(self.client.put(&url))
+            .json(&request)
+            .send()
+            .await?;
 
         read_response(response).await
     }
