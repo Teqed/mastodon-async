@@ -97,8 +97,8 @@ pub use registration::Registration;
 pub use requests::{
     AddAdminDomainBlockRequest, AddCanonicalEmailBlockRequest, AddDomainAllowRequest,
     AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest,
-    StatusesRequest, TestCanonicalEmailBlocksRequest, UpdateCredsRequest, UpdateIpBlockRequest,
-    UpdatePushRequest,
+    AddReportRequest, StatusesRequest, TestCanonicalEmailBlocksRequest, UpdateCredsRequest,
+    UpdateIpBlockRequest, UpdatePushRequest,
 };
 pub use status_builder::{NewStatus, StatusBuilder};
 

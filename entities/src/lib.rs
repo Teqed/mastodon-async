@@ -35,6 +35,8 @@ pub mod relationship;
 pub mod report;
 /// Data structures for ser/de of role-related resources
 pub mod role;
+/// Data structures for ser/de of rule-related resources
+pub mod rule;
 /// Data structures for ser/de of search-related resources
 pub mod search_result;
 /// Data structures for ser/de of status-related resources
@@ -73,8 +75,9 @@ pub mod prelude {
         notification::Notification,
         push::Subscription,
         relationship::Relationship,
-        report::Report,
+        report::{Category as ReportCategory, Report},
         role::{Permissions as RolePermissions, Role},
+        rule::Rule,
         search_result::SearchResult,
         status::{Application, Emoji, Status},
         visibility::Visibility,

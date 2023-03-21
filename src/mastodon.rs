@@ -13,9 +13,9 @@ use crate::{
     log_serde,
     polling_time::PollingTime,
     AddAdminDomainBlockRequest, AddCanonicalEmailBlockRequest, AddDomainAllowRequest,
-    AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest, Data,
-    NewStatus, Page, StatusesRequest, TestCanonicalEmailBlocksRequest, UpdateCredsRequest,
-    UpdateIpBlockRequest, UpdatePushRequest,
+    AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest,
+    AddReportRequest, Data, NewStatus, Page, StatusesRequest, TestCanonicalEmailBlocksRequest,
+    UpdateCredsRequest, UpdateIpBlockRequest, UpdatePushRequest,
 };
 use futures::TryStream;
 use log::{as_debug, as_serde, debug, error, trace};
@@ -204,6 +204,17 @@ impl Mastodon {
         let changes = builder.build()?;
         let url = self.route("/api/v1/accounts/update_credentials");
         let response = self.client.patch(&url).json(&changes).send().await?;
+
+        read_response(response).await
+    }
+
+    /// Create a report
+    pub async fn add_report(&self, request: &mut AddReportRequest) -> Result<Report> {
+        let response = self
+            .authenticated(self.client.post(self.route("/api/v1/reports")))
+            .json(&request)
+            .send()
+            .await?;
 
         read_response(response).await
     }

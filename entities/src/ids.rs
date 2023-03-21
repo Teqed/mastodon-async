@@ -92,5 +92,6 @@ define_ids!(
     RelationshipId,
     ReportId,
     RoleId,
+    RuleId,
     StatusId,
 );

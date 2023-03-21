@@ -1,7 +1,7 @@
 //! Module containing everything related to an instance.
 use serde::{Deserialize, Serialize};
 
-use super::account::Account;
+use crate::prelude::{Account, Rule};
 
 /// A struct containing info of an instance.
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
@@ -29,6 +29,8 @@ pub struct Instance {
     pub contact_account: Option<Account>,
     /// The maximum number of characters allowed in a status
     pub max_toot_chars: Option<u32>,
+    /// List of server rules.
+    pub rules: Option<Vec<Rule>>,
 }
 
 /// Object containing url for streaming api.
