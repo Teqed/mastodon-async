@@ -8,6 +8,7 @@ pub mod domain_block;
 pub mod email_domain_block;
 pub mod ip;
 pub mod ip_block;
+pub mod report;
 
 pub use account::Account;
 pub use canonical_email_block::CanonicalEmailBlock;
@@ -16,3 +17,4 @@ pub use domain_block::{DomainBlock, Severity as DomainBlockSeverity};
 pub use email_domain_block::{EmailDomainBlock, HistoryDay as EmailDomainBlockHistoryDay};
 pub use ip::Ip;
 pub use ip_block::{IpBlock, Severity as IpBlockSeverity};
+pub use report::Report;

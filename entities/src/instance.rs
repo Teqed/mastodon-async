@@ -1,7 +1,7 @@
 //! Module containing everything related to an instance.
+use crate::account::Account;
+use crate::rule::Rule;
 use serde::{Deserialize, Serialize};
-
-use crate::prelude::{Account, Rule};
 
 /// A struct containing info of an instance.
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]

@@ -15,6 +15,10 @@ mod report;
 mod statuses;
 mod update_credentials;
 
+/// Data structures for the MastodonClient::admin_perform_account_action methods
+pub use self::admin::account::{
+    AccountActionRequest as AdminAccountActionRequest, AccountActionType as AdminAccountActionType,
+};
 /// Data structures for the MastodonClient::admin_add_canonical_email_block and ::admin_test_canonical_email_blocks methods
 pub use self::admin::canonical_email_block::{
     AddCanonicalEmailBlockRequest, TestCanonicalEmailBlocksRequest,
@@ -27,6 +31,8 @@ pub use self::admin::domain_block::AddDomainBlockRequest as AddAdminDomainBlockR
 pub use self::admin::email_domain_block::AddEmailDomainBlockRequest;
 /// Data structures for the MastodonClient::admin_add_ip_block and ::admin_update_ip_block methods
 pub use self::admin::ip_block::{AddIpBlockRequest, UpdateIpBlockRequest};
+/// Data structure for the MastodonClient::admin_add_ip_block and ::admin_update_ip_block methods
+pub use self::admin::report::UpdateReportRequest;
 
 /// Unprefixed admin request data structures.
 pub mod admin;

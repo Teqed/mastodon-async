@@ -1,5 +1,6 @@
 use std::{borrow::Cow, ops::Deref, path::Path, sync::Arc};
 
+use crate::requests::UpdateReportRequest;
 use crate::{
     entities::{
         account::Account,
@@ -14,8 +15,8 @@ use crate::{
     polling_time::PollingTime,
     AddAdminDomainBlockRequest, AddCanonicalEmailBlockRequest, AddDomainAllowRequest,
     AddEmailDomainBlockRequest, AddFilterRequest, AddIpBlockRequest, AddPushRequest,
-    AddReportRequest, Data, NewStatus, Page, StatusesRequest, TestCanonicalEmailBlocksRequest,
-    UpdateCredsRequest, UpdateIpBlockRequest, UpdatePushRequest,
+    AddReportRequest, AdminAccountActionRequest, Data, NewStatus, Page, StatusesRequest,
+    TestCanonicalEmailBlocksRequest, UpdateCredsRequest, UpdateIpBlockRequest, UpdatePushRequest,
 };
 use futures::TryStream;
 use log::{as_debug, as_serde, debug, error, trace};
@@ -73,11 +74,14 @@ impl Mastodon {
         (get) reports: "reports" => Report,
         (get (q: &'a str, #[serde(skip_serializing_if = "Option::is_none")] limit: Option<u64>, following: bool,)) search_accounts: "accounts/search" => Account,
         (get) get_endorsements: "endorsements" => Account,
+        // TODO: support filtering and v2 version
+        (get) admin_get_accounts: "admin/accounts" => Account,
         (get) admin_get_canonical_email_blocks: "admin/canonical_email_blocks" => CanonicalEmailBlock,
         (get) admin_get_domain_allows: "admin/domain_allows" => DomainAllow,
         (get) admin_get_domain_blocks: "admin/domain_blocks" => AdminDomainBlock,
         (get) admin_get_email_domain_blocks: "admin/email_domain_blocks" => EmailDomainBlock,
         (get) admin_get_ip_blocks: "admin/ip_blocks" => IpBlock,
+        (get) admin_get_reports: "admin/reports" => IpBlock,
     }
 
     paged_routes_with_id! {
@@ -134,6 +138,14 @@ impl Mastodon {
         (post) endorse_user[AccountId]: "accounts/{}/pin" => Relationship,
         (post) unendorse_user[AccountId]: "accounts/{}/unpin" => Relationship,
         (get) attachment[AttachmentId]: "media/{}" => Attachment,
+        (get) admin_get_account[AccountId]: "admin/accounts/{}" => AdminAccount,
+        (delete) admin_delete_account[AccountId]: "admin/accounts/{}" => AdminAccount,
+        (post) admin_approve_account[AccountId]: "admin/accounts/{}/approve" => AdminAccount,
+        (post) admin_reject_account[AccountId]: "admin/accounts/{}/reject" => AdminAccount,
+        (post) admin_enable_account[AccountId]: "admin/accounts/{}/enable" => AdminAccount,
+        (post) admin_unsilence_account[AccountId]: "admin/accounts/{}/unsilence" => AdminAccount,
+        (post) admin_unsuspend_account[AccountId]: "admin/accounts/{}/unsuspend" => AdminAccount,
+        (post) admin_unsensitive_account[AccountId]: "admin/accounts/{}/unsensitive" => AdminAccount,
         (get) admin_get_canonical_email_block[CanonicalEmailBlockId]: "admin/canonical_email_blocks/{}" => CanonicalEmailBlock,
         (delete) admin_delete_canonical_email_block[CanonicalEmailBlockId]: "admin/canonical_email_blocks/{}" => CanonicalEmailBlock,
         (get) admin_get_domain_allow[DomainAllowId]: "admin/domain_allows/{}" => DomainAllow,
@@ -144,7 +156,11 @@ impl Mastodon {
         (delete) admin_delete_email_domain_block[EmailDomainBlockId]: "admin/email_domain_blocks/{}" => EmailDomainBlock,
         (get) admin_get_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
         (delete) admin_delete_ip_block[IpBlockId]: "admin/ip_blocks/{}" => IpBlock,
-        (get) admin_get_account[AccountId]: "admin/accounts/{}" => AdminAccount,
+        (get) admin_get_report[ReportId]: "admin/accounts/{}" => AdminReport,
+        (post) admin_assign_report_to_self[ReportId]: "admin/accounts/{}/assign_to_self" => AdminReport,
+        (post) admin_unassign_report[ReportId]: "admin/accounts/{}/unassign" => AdminReport,
+        (post) admin_resolve_report[ReportId]: "admin/accounts/{}/resolve" => AdminReport,
+        (post) admin_reopen_report[ReportId]: "admin/accounts/{}/reopen" => AdminReport,
     }
 
     streaming! {
@@ -361,6 +377,23 @@ impl Mastodon {
 
     // TODO: macro the add/update methods for at least admin objects
 
+    /// POST POST /api/v1/admin/accounts/:id/action
+    /// https://docs.joinmastodon.org/methods/admin/accounts/#action
+    pub async fn admin_perform_account_action(
+        &self,
+        id: &AccountId,
+        request: &mut AdminAccountActionRequest,
+    ) -> Result<AdminAccount> {
+        let url = self.route(format!("/api/v1/admin/accounts/{}/action", id));
+        let response = self
+            .authenticated(self.client.post(self.route(url)))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
     /// POST /api/v1/admin/canonical_email_blocks
     /// https://docs.joinmastodon.org/methods/admin/canonical_email_blocks/#create
     pub async fn admin_add_canonical_email_block(
@@ -379,7 +412,7 @@ impl Mastodon {
         read_response(response).await
     }
 
-    /// POST /api/v1/admin/ip_blocks
+    /// POST /api/v1/admin/canonical_email_blocks/test
     /// https://docs.joinmastodon.org/methods/admin/canonical_email_blocks/#test
     pub async fn admin_test_canonical_email_blocks(
         &self,
@@ -412,8 +445,8 @@ impl Mastodon {
         read_response(response).await
     }
 
-    /// POST /api/v1/admin/ip_blocks
-    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#create
+    /// POST /api/v1/admin/domain_blocks
+    /// https://docs.joinmastodon.org/methods/admin/domain_blocks/#create
     pub async fn admin_add_domain_block(
         &self,
         request: &mut AddAdminDomainBlockRequest,
@@ -427,8 +460,8 @@ impl Mastodon {
         read_response(response).await
     }
 
-    /// PUT /api/v1/admin/ip_blocks/:id
-    /// https://docs.joinmastodon.org/methods/admin/ip_blocks/#update
+    /// PUT /api/v1/admin/domain_blocks/:id
+    /// https://docs.joinmastodon.org/methods/admin/domain_blocks/#update
     pub async fn admin_update_domain_block(
         &self,
         id: &AdminDomainBlockId,
@@ -482,6 +515,23 @@ impl Mastodon {
         request: &mut UpdateIpBlockRequest,
     ) -> Result<IpBlock> {
         let url = self.route(format!("/api/v1/admin/ip_blocks/{}", id));
+        let response = self
+            .authenticated(self.client.put(&url))
+            .json(&request)
+            .send()
+            .await?;
+
+        read_response(response).await
+    }
+
+    /// PUT /api/v1/admin/reports/:id
+    /// https://docs.joinmastodon.org/methods/admin/reports/#update
+    pub async fn admin_update_report(
+        &self,
+        id: &ReportId,
+        request: &mut UpdateReportRequest,
+    ) -> Result<AdminReport> {
+        let url = self.route(format!("/api/v1/admin/reports/{}", id));
         let response = self
             .authenticated(self.client.put(&url))
             .json(&request)

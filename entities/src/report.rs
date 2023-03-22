@@ -1,5 +1,5 @@
-//! module containing information about a finished report of a user.
-use crate::prelude::ReportId;
+//! module containing information about a report of a user.
+use crate::ReportId;
 use derive_is_enum_variant::is_enum_variant;
 use serde::{Deserialize, Serialize};
 

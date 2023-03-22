@@ -1,6 +1,6 @@
 //! module containing information about a role.
 
-use crate::prelude::*;
+use crate::RoleId;
 use bitflags::bitflags;
 use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, NoneAsEmptyString};

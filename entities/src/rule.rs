@@ -1,5 +1,5 @@
 //! Module representing a server rule.
-use crate::prelude::RuleId;
+use crate::RuleId;
 use serde::{Deserialize, Serialize};
 
 /// A server rule.

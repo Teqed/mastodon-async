@@ -62,6 +62,7 @@ pub mod prelude {
             CanonicalEmailBlock, DomainAllow, DomainBlock as AdminDomainBlock,
             DomainBlockSeverity as AdminDomainBlockSeverity, EmailDomainBlock,
             EmailDomainBlockHistoryDay, Ip, IpBlock, IpBlockId, IpBlockSeverity,
+            Report as AdminReport,
         },
         attachment::{Attachment, MediaType},
         card::Card,
