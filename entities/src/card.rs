@@ -24,15 +24,14 @@ pub struct Card {
     /// The author of the original resource.
     pub author_name: String,
     /// A link to the author of the original resource.
-    #[serde(with = "conversion::maybe_empty_url")]
-    pub author_url: Option<Url>,
+    pub author_url: Option<String>,
     /// The provider of the original resource.
     pub provider_name: String,
     /// A link to the provider of the original resource.
     #[serde(with = "conversion::maybe_empty_url")]
     pub provider_url: Option<Url>,
     /// HTML to be used for generating the preview card.
-    pub html: String,
+    pub html: Option<String>,
     /// Width of preview, in pixels. When [`card_type`](Card::card_type) is `Link`, this is `0`.
     pub width: u64,
     /// Height of preview, in pixels. When [`card_type`](Card::card_type) is `Link`, this is `0`.

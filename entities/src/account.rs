@@ -93,7 +93,7 @@ pub struct Account {
     pub avatar: Url,
     /// A static version of the avatar. Equal to avatar if its value is a static
     /// image; different if avatar is an animated GIF. See also [the API reference](https://docs.joinmastodon.org/entities/Account/#avatar_static)
-    pub avatar_static: Url,
+    pub avatar_static: Option<String>,
     /// Indicates that the account may perform automated actions, may not be
     /// monitored, or identifies as a robot. See also [the API reference](https://docs.joinmastodon.org/entities/Account/#bot)
     pub bot: bool,

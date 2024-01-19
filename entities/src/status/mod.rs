@@ -90,7 +90,7 @@ pub struct Status {
     /// The application that created this status.
     pub application: Option<Application>,
     /// The detected language for the status, if detected.
-    pub language: Option<Language>,
+    pub language: Option<String>,
     /// The poll attached to the status.
     pub poll: Option<Poll>,
     /// Preview card for links included within status content.
