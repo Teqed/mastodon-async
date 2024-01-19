@@ -37,7 +37,7 @@ pub struct Card {
     /// Height of preview, in pixels. When [`card_type`](Card::card_type) is `Link`, this is `0`.
     pub height: u64,
     /// Used for photo embeds, instead of custom html.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
     pub embed_url: Option<String>,
     /// A hash computed by [the BlurHash algorithm](https://github.com/woltapp/blurhash),
     /// for generating colorful preview thumbnails when media has not been
