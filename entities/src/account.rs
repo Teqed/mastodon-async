@@ -156,7 +156,7 @@ pub struct Account {
     /// The location of the user’s profile page. See also [the API reference](https://docs.joinmastodon.org/entities/Account/#url)
     pub url: Url,
     /// User's URI.
-    pub uri: Url,
+    pub uri: Option<Url>,
     /// The username of the account, not including domain. See also [the API reference](https://docs.joinmastodon.org/entities/Account/#username)
     pub username: String,
 }
