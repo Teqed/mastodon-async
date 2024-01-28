@@ -35,6 +35,10 @@ pub struct Status {
     /// The ID of the status this status is replying to, if the status is
     /// a reply.
     pub in_reply_to_id: Option<StatusId>,
+    /// Friendica-specific: The ID of the status this status is replying to,
+    /// if the status is a reply.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub in_reply_to_status: Option<StatusId>,
     /// The ID of the account this status is replying to, if the status is
     /// a reply.
     pub in_reply_to_account_id: Option<AccountId>,
