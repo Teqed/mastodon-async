@@ -122,7 +122,7 @@ pub struct FocalPoint {
     /// The point on the horizontal plane which should remain in focus.
     pub x: f64,
     /// The point on the vertical plane which should remain in focus.
-    pub y: f64,
+    pub y: Option<f64>,
 }
 
 /// A media attachment which has been processed and has a URL.
